@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class UserDataManager : MonoBehaviour {
 
@@ -77,7 +78,11 @@ public class UserDataManager : MonoBehaviour {
 			//EventManager.Instance.QueueEvent(new JSONEvent("OnLanguageChange", null));
 
 			// Reload app with new language
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
 			Application.LoadLevel(Application.loadedLevel);
+#else
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+#endif
 		}
 
 	}

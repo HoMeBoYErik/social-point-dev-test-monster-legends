@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Text;
 using System;
@@ -102,7 +103,13 @@ public class VC_LoadView : MonoBehaviour, IEventListener {
 	{
 		yield return new WaitForSeconds(5.0f);
 
-		Application.LoadLevel(Application.loadedLevel);
+
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+			Application.LoadLevel(Application.loadedLevel);
+#else
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+#endif
+        
 	}
 
 	
