@@ -3,17 +3,21 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Text;
 using System;
+using UniRx;
 using SocialPoint;
 
 public class VC_LoadView : MonoBehaviour, IEventListener {
 
 	public UserDataManager userDataManager;
 	public GameDataManager gameDataManager;
+    public GameDataService gameDataService;
 	
 	// GUI ELEMENTS - LOADING PANEL
 	public UIPanel loadingPanel;
 	public UILabel loadingLabel;
 	public UISprite progressBar;
+
+    //public FloatReactiveProperty progress;
 
 
 	void Start()
@@ -23,6 +27,8 @@ public class VC_LoadView : MonoBehaviour, IEventListener {
 
 		// Show Loading screen in user language
 		ShowLoadingScreen( userDataManager.Language );
+        gameDataService.CurrentLoadProgress.Subscribe(pr => progressBar.fillAmount = pr);
+       
 
 		// 3 (Load JSON) + 4 (Load Images)
 		//gameDataManager.Load( userDataManager.Language );
@@ -131,7 +137,7 @@ public class VC_LoadView : MonoBehaviour, IEventListener {
 					// 3 (Load JSON) + 4 (Load Images)
 					gameDataManager.Load( userDataManager.Language );					
 					// 5 show feedback of download progress
-					StartCoroutine("UpdateDownloadProgressBar");				
+					//StartCoroutine("UpdateDownloadProgressBar");				
 					break;
 				
 			}

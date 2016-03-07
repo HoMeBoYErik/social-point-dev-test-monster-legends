@@ -12,7 +12,7 @@ namespace SocialPoint
         [SerializeField]
         public Dictionary<string, string> strings;                // locales strings depending on 'lang' param
         [SerializeField]
-        public Dictionary<string, ElementDataModel> elements;     // elements image thumb (fire, nature, air, etc...
+        public ReactiveDictionary<string, ElementDataModel> elements;     // elements image thumb (fire, nature, air, etc...
         [SerializeField]
         //public MonsterDataModel[] monsters;                       // monsters list
         public ReactiveCollection<MonsterDataModel> monsters;

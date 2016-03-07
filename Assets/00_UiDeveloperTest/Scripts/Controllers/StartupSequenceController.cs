@@ -19,6 +19,7 @@ namespace SocialPoint
         // Startup command
         void Start()
         {
+            // Load game data from remote service based on current system/user language
             gameDataService.LoadData(localizationService.Language)
                 .Subscribe(
                     x => OnDataReady(x),    // on success
@@ -39,6 +40,7 @@ namespace SocialPoint
             gameDataService.LoadMonsters(data.monsters);
             // nullify local reference
             data = null;
+            //Debug.Log("[StartupSequenceController] : Parsing Game Data Completed");
         }
 
         void OnDataError(Exception ex)
@@ -51,9 +53,13 @@ namespace SocialPoint
         void OnDataComplete()
         {
 #if DEBUG
-            Debug.Log("[StartupSequenceController] : Load Game Data Completed");
+            //Debug.Log("[StartupSequenceController] : Load Game Data Completed");
+            //Debug.Log("[StartupSequenceController] : Starting Download of image assets");
 #endif
             // Start download images sequence...
+            var  progressReport =  new Progress<float>(gameDataService.progressReport);
+            gameDataService.DownloadImages(progressReport);
+
         }
     }
 }
