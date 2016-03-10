@@ -1,4 +1,4 @@
-public class JSONEvent : IEvent
+public class JSONEvent : Deprecated.IEvent
 {
 	public JSONObject jsonData;
 	public string callName;
@@ -9,17 +9,17 @@ public class JSONEvent : IEvent
 		this.jsonData = jsonData;
 	}
 
-	string IEvent.GetCallName()
+    string Deprecated.IEvent.GetCallName()
 	{
 		return callName;
 	}
-	
-	string IEvent.GetName()
+
+    string Deprecated.IEvent.GetName()
 	{
 		return this.GetType().ToString();
 	}
-	
-	object IEvent.GetData()
+
+    object Deprecated.IEvent.GetData()
 	{
 		return jsonData;
 	}

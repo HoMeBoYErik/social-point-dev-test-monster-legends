@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using SocialPoint;
+using Deprecated;
 
 public class VC_SpeedupPopupView : MonoBehaviour, IEventListener {
 

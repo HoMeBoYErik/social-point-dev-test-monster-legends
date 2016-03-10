@@ -3,6 +3,7 @@ using System.IO;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Deprecated;
 
 namespace SocialPoint
 {

@@ -33,7 +33,7 @@ public class ErrorObject
 	}
 }
 
-public class ErrorEvent : IEvent
+public class ErrorEvent : Deprecated.IEvent
 {
 	private ErrorObject _errorObj;
 	
@@ -41,18 +41,18 @@ public class ErrorEvent : IEvent
 	{
 		_errorObj = new ErrorObject( errorCode, errorDesc );
 	}
-	
-	string IEvent.GetCallName()
+
+    string Deprecated.IEvent.GetCallName()
 	{
 		return this._errorObj.errorCode.ToString();
 	}
-	
-	string IEvent.GetName()
+
+    string Deprecated.IEvent.GetName()
 	{
 		return this.GetType().ToString();
 	}
-	
-	object IEvent.GetData()
+
+    object Deprecated.IEvent.GetData()
 	{
 		return this._errorObj;
 	}

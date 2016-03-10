@@ -5,6 +5,7 @@ using System.Text;
 using System;
 using UniRx;
 using SocialPoint;
+using Deprecated;
 
 public class VC_LoadView : MonoBehaviour, IEventListener {
 

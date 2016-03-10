@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Deprecated;
 
 public class VC_SettingsView : MonoBehaviour,  IEventListener 
 {
