@@ -8,12 +8,13 @@ using strange.extensions.dispatcher.eventdispatcher.api;
 using strange.extensions.mediation.impl;
 using SocialPoint;
 
-
-public class GameViewMediator : Mediator
+public class BreedingViewMediator : Mediator
 {
     // Injecting the view
     [Inject]
-    public GameView view { get; set; }
+    public BreedingView view { get; set; }
+
+    // Inject here data models (RX)
 
     public override void OnRegister()
     {
@@ -27,4 +28,5 @@ public class GameViewMediator : Mediator
     {
         base.OnRemove();
     }
+	
 }

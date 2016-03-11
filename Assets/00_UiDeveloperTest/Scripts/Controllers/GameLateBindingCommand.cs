@@ -17,6 +17,8 @@ namespace SocialPoint.Commands
         [Inject(ContextKeys.CONTEXT)]
         public IContext context { get; set; }
 
+        
+
         override public void Execute()
         {
             // If we are not first context something is wrong
@@ -24,6 +26,8 @@ namespace SocialPoint.Commands
             {
 
             }
+
+            
 
         }
 

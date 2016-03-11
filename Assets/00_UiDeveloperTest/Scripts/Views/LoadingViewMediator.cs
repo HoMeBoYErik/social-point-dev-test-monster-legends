@@ -8,12 +8,11 @@ using strange.extensions.dispatcher.eventdispatcher.api;
 using strange.extensions.mediation.impl;
 using SocialPoint;
 
+public class LoadingViewMediator : Mediator{
 
-public class GameViewMediator : Mediator
-{
     // Injecting the view
     [Inject]
-    public GameView view { get; set; }
+    public LoadingView view { get; set; }
 
     public override void OnRegister()
     {

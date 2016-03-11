@@ -9,11 +9,11 @@ using strange.extensions.mediation.impl;
 using SocialPoint;
 
 
-public class GameViewMediator : Mediator
-{
+public class MonsterSelectionViewMediator : Mediator {
+
     // Injecting the view
     [Inject]
-    public GameView view { get; set; }
+    public MonsterSelectionView view { get; set; }
 
     public override void OnRegister()
     {

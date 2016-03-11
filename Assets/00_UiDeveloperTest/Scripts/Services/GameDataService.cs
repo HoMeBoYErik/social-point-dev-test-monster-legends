@@ -7,7 +7,7 @@ using UniRx;
 
 namespace SocialPoint
 {
-    public class GameDataService : MonoBehaviour
+    public class GameDataService : MonoBehaviour, IGameDataService
     {
 
         // URL where to download game data from (REST API that return a JSON string)

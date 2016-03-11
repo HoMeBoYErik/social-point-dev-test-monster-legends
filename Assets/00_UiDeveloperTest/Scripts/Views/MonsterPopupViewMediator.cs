@@ -6,14 +6,14 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using strange.extensions.dispatcher.eventdispatcher.api;
 using strange.extensions.mediation.impl;
+
 using SocialPoint;
 
+public class MonsterPopupViewMediator : Mediator{
 
-public class GameViewMediator : Mediator
-{
     // Injecting the view
     [Inject]
-    public GameView view { get; set; }
+    public MonsterPopupView view { get; set; }
 
     public override void OnRegister()
     {

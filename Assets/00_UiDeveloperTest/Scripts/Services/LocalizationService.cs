@@ -2,49 +2,26 @@
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 
 namespace SocialPoint
 {
-    public class LocalizationService : MonoBehaviour
+    public class LocalizationService : MonoBehaviour, ILocalizationService
     {
-        // Static singleton reference
-        public static LocalizationService Instance { get; private set; }
-        // whether or not this object should persist accross scenes (DontDestroyOnLoad)
-        public bool makePersistent = true;
-        
-        public string Language { get; private set; }
+        public string Language { get; set; }
         private string k_lang = "k_lang";
 
         [SerializeField]
-        private Dictionary<string, string> strings;
+        private ReactiveDictionary<string, string> strings;
 
-        void Awake()
-        {
-            // First we check if there are any other instances conflicting
-            if (Instance != null && Instance != this)
-            {
-                // If that is the case, we destroy other instances
-                Destroy(gameObject);
-            }
 
-            // Here we save our singleton instance
-            Instance = this;
-
-            // Furthermore we make sure that we don't destroy between scenes (this is optional)
-            if (makePersistent)
-            {
-                DontDestroyOnLoad(this.gameObject);
-            }
-
-            // Others "one time" initializations...
-
-            // Load saved language prefs
-            LoadUserLanguage();
+        public LocalizationService()
+        {           
         }
 
         public void LoadDictionary(Dictionary<string, string> dict)
         {
-            strings = dict;           
+            strings = new ReactiveDictionary<string, string>(dict);
         }
 
         /// Get a string by key based on current loaded locale
@@ -56,10 +33,9 @@ namespace SocialPoint
             }
 
             return null;
-        }        
-       
+        }
 
-        private void LoadUserLanguage()
+        public string LoadUserLanguage()
         {
             // if user language not yet set
             if (!PlayerPrefs.HasKey(k_lang))
@@ -100,6 +76,8 @@ namespace SocialPoint
             {
                 Language = PlayerPrefs.GetString(k_lang);
             }
+
+            return Language;
         }
 
         // Set the language for the app
@@ -133,19 +111,19 @@ namespace SocialPoint
         }
 
         // Validate that user is trying to switch to a supported language
-        private bool isValidLanguage(string lang)
+        public bool isValidLanguage(string lang)
         {
             if (lang == "en" || lang == "es" || lang == "fr" || lang == "ru") return true;
             return false;
         }
 
         #region string_utils_static_methods
-        public static string UnescapeString(string escapedString)
+        public string UnescapeString(string escapedString)
         {
             return System.Text.RegularExpressions.Regex.Unescape(escapedString);
         }
 
-        public static string DecodeUnicodeString(string inputString)
+        public string DecodeUnicodeString(string inputString)
         {        
             inputString = System.Text.RegularExpressions.Regex.Unescape(inputString);
             return inputString;           

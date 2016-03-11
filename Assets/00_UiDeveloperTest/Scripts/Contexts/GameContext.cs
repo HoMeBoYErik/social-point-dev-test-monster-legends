@@ -14,6 +14,7 @@ namespace SocialPoint
 {
     public class GameContext : MVCSContext
     {
+        
         public GameContext (MonoBehaviour view) : base (view)
         {
         }
@@ -29,16 +30,14 @@ namespace SocialPoint
             base.addCoreComponents();
             injectionBinder.Unbind<ICommandBinder>();
             injectionBinder.Bind<ICommandBinder>().To<SignalCommandBinder>().ToSingleton();
+
+            // Inject here prefabs to instances
         }
 
         // The First Context for the game starts here with the start signal 
         override public IContext Start()
         {
             base.Start();
-
-            // Instantiate any prefab (Monobehaviours) that we want to inject into other objects
-            // And save reference
-
 
             // Fire here any startup signal to bootstrap the context
             GameStartSignal startSignal = (GameStartSignal)injectionBinder.GetInstance<GameStartSignal>();
@@ -60,9 +59,29 @@ namespace SocialPoint
                 .To<GameLateBindingCommand>()
                 .Once();
 
+            // Class bindings to values
+            // Instantiate any prefab (Monobehaviours) that we want to inject into other objects
+            // And save reference
+            // TODO switch to singleton on final
+            GameDataService gameDataService = (this.contextView as GameObject).GetComponent<GameDataService>();
+            injectionBinder.Bind<GameDataService>().ToValue(gameDataService);
 
-            // Map views with their mediators
+            LocalizationService localizationService = (this.contextView as GameObject).GetComponent<LocalizationService>();
+            injectionBinder.Bind<ILocalizationService>().ToValue(localizationService);
+
+
+            // Map views with their mediators/presenters
             mediationBinder.Bind<GameView>().To<GameViewMediator>();
+            mediationBinder.Bind<BreedingView>().To<BreedingViewMediator>();
+            mediationBinder.Bind<LanguageView>().To<LanguageViewMediator>();
+            mediationBinder.Bind<LoadingView>().To<LoadingViewMediator>();
+            mediationBinder.Bind<MonsterPopupView>().To<MonsterPopupViewMediator>();
+            mediationBinder.Bind<MonsterSelectionView>().To<MonsterSelectionViewMediator>();
+            mediationBinder.Bind<SpeedUpView>().To<SpeedUpViewMediator>();
+
+            // Bind Services
+            //injectionBinder.Bind<ILocalizationService>().To<LocalizationService>().ToSingleton();
+
         }
     }
 }
