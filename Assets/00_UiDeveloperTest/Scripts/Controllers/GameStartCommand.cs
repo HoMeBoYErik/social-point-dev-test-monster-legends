@@ -38,7 +38,6 @@ namespace SocialPoint.Commands
                
             }
 
-
             string lang = localizationService.LoadUserLanguage();
             gameDataService.LoadData(lang)
                .Subscribe(
@@ -88,7 +87,7 @@ namespace SocialPoint.Commands
 #endif
             // Start download images sequence...
             //var progressReport = new Progress<float>(gameDataService.progressReport);
-            //gameDataService.DownloadImages(progressReport);
+            gameDataService.DownloadImages();
 
             Release();
 
