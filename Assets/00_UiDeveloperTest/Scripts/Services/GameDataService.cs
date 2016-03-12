@@ -71,18 +71,6 @@ namespace SocialPoint
 
         public void DownloadImages(Progress<float> pr = null)
         {
-            
-           /* _requestDownloadProgress.Values.ObserveEveryValueChanged(col => col.ToObservable()
-                                            .Aggregate((acc, currentValue) => acc + currentValue)
-                                            .Subscribe(x =>
-                                            {
-                                                
-                                                Debug.Log(x);
-                                                this.CurrentLoadProgress.Value = (x / _requestDownloadProgress.Count);
-                                                Debug.Log("Progress is " + this.CurrentLoadProgress.Value);
-                                            }));*/
-
-
             // - each thumb and full images for monster and elements images
             monsters
                 .ToObservable<MonsterDataModel>()
@@ -91,30 +79,62 @@ namespace SocialPoint
                     .Select(mt => mt.thumb_img)) // extract the urls for thumb images. Stream is [full_img][thumb_img]
                 .Merge(elements.Values.ToObservable<ElementDataModel>()
                     .Select(e => e.img)) // extract the urls for elements images. Stream is [monsters.full_img][monsters.thumb_img][elements.img]
-                .Distinct() // remove duplicated values
+                .Distinct() // remove duplicated values from the known list
                 .Subscribe( // now we have the full list of url for the images we want to download...
                             url =>
                             {
+#if DEBUG
                                 Debug.Log("Starting download process for " + url);
+#endif
                                 GetWWWTexture(url, new Progress<float>(x =>
                                 {                                    
-                                    _requestDownloadProgress[url] = x;                                   
-                                   
+                                    _requestDownloadProgress[url] = x;
+                                    CurrentLoadProgress.Value = CalcGlobalProgress();
+                                    if( pr != null )
+                                    {
+                                        pr.Report(CurrentLoadProgress.Value);   
+                                    }
+                                               
                                 }))
                                     .Retry(DownloadRetryTimes)   // retry up to n times in case of failure
                                     .Subscribe(
                                         tex =>
                                         {
                                             this._imageCache[url] = tex; // On success - store the downloaded image to dictionary cache
+#if DEBUG
                                             Debug.Log("Ended download process for " + url);
+#endif
+                                            _requestDownloadProgress[url] = 1.0f;
+
+                                            // Update current global progress
+                                            CurrentLoadProgress.Value = CalcGlobalProgress();
+                                            if (pr != null)
+                                            {
+                                                pr.Report(CurrentLoadProgress.Value);
+                                            }
+                                            
                                         }
                                 );
 
                             },
-                            () => { Debug.Log("Completed download schedule of all images "); }
+                            () => { 
+#if DEBUG
+                                Debug.Log("Completed download schedule of all images ");
+#endif
+                            }
                  );
 
-        }        
+        }    
+    
+        private float CalcGlobalProgress()
+        {            
+            float sum = 0;
+            foreach (var v in _requestDownloadProgress.Values)
+            {
+                sum += v;
+            }
+            return sum / _requestDownloadProgress.Count;
+        }
 
         // public method to download an image as an observable and get notified about his progress
         public static IObservable<Texture2D> GetWWWTexture(string url, IProgress<float> progress = null)

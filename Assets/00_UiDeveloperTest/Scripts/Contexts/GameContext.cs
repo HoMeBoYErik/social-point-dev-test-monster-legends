@@ -59,6 +59,9 @@ namespace SocialPoint
                 .To<GameLateBindingCommand>()
                 .Once();
 
+            // Binds signals with commands (business logic)
+            commandBinder.Bind<LoadGameDataSignal>().To<LoadGameDataCommand>();
+
             // Class bindings to values
             // Instantiate any prefab (Monobehaviours) that we want to inject into other objects
             // And save reference
@@ -66,9 +69,11 @@ namespace SocialPoint
             GameDataService gameDataService = (this.contextView as GameObject).GetComponent<GameDataService>();
             injectionBinder.Bind<GameDataService>().ToValue(gameDataService);
 
+            // Evaluate if inject directly the monster list structure
+            // and also the image cache
+
             LocalizationService localizationService = (this.contextView as GameObject).GetComponent<LocalizationService>();
             injectionBinder.Bind<ILocalizationService>().ToValue(localizationService);
-
 
             // Map views with their mediators/presenters
             mediationBinder.Bind<GameView>().To<GameViewMediator>();
@@ -79,8 +84,8 @@ namespace SocialPoint
             mediationBinder.Bind<MonsterSelectionView>().To<MonsterSelectionViewMediator>();
             mediationBinder.Bind<SpeedUpView>().To<SpeedUpViewMediator>();
 
-            // Bind Services
-            //injectionBinder.Bind<ILocalizationService>().To<LocalizationService>().ToSingleton();
+            // Bind Signals to context
+            injectionBinder.Bind<LoadCompleteSignal>().ToSingleton(); // when load sequence end
 
         }
     }
