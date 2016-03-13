@@ -64,6 +64,8 @@ namespace SocialPoint
 
             // Binds signals with commands (business logic)
             commandBinder.Bind<LoadGameDataSignal>().To<LoadGameDataCommand>();
+            commandBinder.Bind<StartBreedingSignal>().To<StartBreedingCommand>();
+            commandBinder.Bind<SpeedUpBreedingRequestSignal>().To<SpeedUpBreedingRequestCommand>();
 
             // Class bindings to values
             // Instantiate any prefab (Monobehaviours) that we want to inject into other objects
@@ -93,6 +95,10 @@ namespace SocialPoint
 
             // Bind Signals to context
             injectionBinder.Bind<LoadCompleteSignal>().ToSingleton(); // when load sequence end
+            // when breeding view receive a new couple to show/process
+            injectionBinder.Bind<NewBreedingCoupleSignal>().ToSingleton(); 
+            // when we want to notify a new breeding request to subscribers
+            injectionBinder.Bind<NewSpeedUpBreedingRequestSignal>().ToSingleton();
 
 
             // Bind prefabs based on configuration

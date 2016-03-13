@@ -16,6 +16,13 @@ namespace SocialPoint.Signals
     public class LoadCompleteSignal : Signal<ReactiveCollection<MonsterDataModel>,
                                               ReactiveDictionary<string, ElementDataModel>,
                                               Dictionary<string, Texture2D>> { }
+
+    
+    public class StartBreedingSignal : Signal<BreedingCoupleIdModel> { }
+    public class NewBreedingCoupleSignal : Signal<BreedingCoupleDataModel> { }
+    public class SpeedUpBreedingRequestSignal : Signal<BreedingStatusModel> { }
+    public class NewSpeedUpBreedingRequestSignal : Signal<BreedingStatusModel> { }
+    public class BreedingEndedSignal : Signal { }
     #endregion
 
 }

@@ -26,10 +26,13 @@ public class MonsterSelectionViewMediator : Mediator {
     [Inject]
     public MonsterRowFactory monsterRowFactory { get; set; }
 
-
     // Signals we want to listen to
     [Inject]
     public LoadCompleteSignal loadCompleteSignal { get; set; }
+
+    // Signals we want to fire
+    [Inject]
+    public StartBreedingSignal startBreedingSignal { get; set; }
 
     private StringReactiveProperty breedingButtonText;
     private string breedingButtonNormalText;
@@ -57,6 +60,7 @@ public class MonsterSelectionViewMediator : Mediator {
     {
         base.OnRemove();
         loadCompleteSignal.RemoveListener(OnLoadComplete);
+        view.OnStartBreedingClick -= this.OnStartBreedingClick;
     }
 
     private void OnLoadComplete( ReactiveCollection<MonsterDataModel> monsters,
@@ -70,6 +74,7 @@ public class MonsterSelectionViewMediator : Mediator {
         breedingButtonSelectedText = localizationService.GetString("select_button_selected").Value;
         breedingButtonText = new StringReactiveProperty(breedingButtonNormalText);       
         breedingButtonText.Subscribe(x => view.breeding_button_text.text = x.ToUpper());
+        view.OnStartBreedingClick += this.OnStartBreedingClick;
         this.DisableBreeding();
 
         this.monsters = monsters;
@@ -130,6 +135,17 @@ public class MonsterSelectionViewMediator : Mediator {
         view.ShowView();
     }
 
+    public void ResetAllSelections()
+    {
+        OnMonsterClick_Selected(leftSelectedMonster.id, leftSelectedMonster.tableSide);
+        OnMonsterClick_Selected(rightSelectedMonster.id, rightSelectedMonster.tableSide);
+        leftSelectedMonster = null;
+        rightSelectedMonster = null;
+        view.right_list_root.localPosition = Vector3.zero;
+        view.left_list_root.localPosition = Vector3.zero;
+        RefreshBreedingButton();
+    }
+
     public void EnableBreeding()
     {
         view.breeding_button.interactable = true;
@@ -149,11 +165,19 @@ public class MonsterSelectionViewMediator : Mediator {
         {
             EnableBreeding();
             // TODO...Start animations on view
+            // TODO...make this one a subscription to an observable
         }
         else
         {
             DisableBreeding();
         }
+    }
+
+    public void OnStartBreedingClick()
+    {
+        BreedingCoupleIdModel breedingCouple = new BreedingCoupleIdModel(leftSelectedMonster.id, rightSelectedMonster.id);
+        startBreedingSignal.Dispatch(breedingCouple);
+        view.HideView();
     }
 
     public void OnMonsterClick_NotSelected(int id, MonsterRowView.TableSide tableSide)

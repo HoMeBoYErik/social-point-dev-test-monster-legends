@@ -19,6 +19,9 @@ public class MonsterSelectionView : View {
     public Transform right_list_root;
     public Transform left_list_root;
 
+    public delegate void StartBreedingClick();
+    public StartBreedingClick OnStartBreedingClick;
+
 
     // On Awake
     protected override void Awake()
@@ -61,6 +64,10 @@ public class MonsterSelectionView : View {
     // Here map delegates between others monobehaviours and the view
     internal void mapEventListeners()
     {
+        breeding_button.onClick.AddListener(() =>
+        {
+            OnStartBreedingClick();
+        });
     }
 
     internal void init()
