@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using strange.extensions.context.api;
 using strange.extensions.context.impl;
@@ -12,11 +13,11 @@ namespace SocialPoint.Commands
 {
     public class LoadGameDataCommand : Command
     {
-        //[Inject(ContextKeys.CONTEXT_VIEW)]
-        //public GameObject contextView { get; set; }
+        [Inject(ContextKeys.CONTEXT_VIEW)]
+        public GameObject contextView { get; set; }
 
-        //[Inject(ContextKeys.CONTEXT)]
-        //public IContext context { get; set; }
+        [Inject(ContextKeys.CONTEXT)]
+        public IContext context { get; set; }
 
         [Inject]
         public ILocalizationService localizationService { get; set; }
@@ -89,8 +90,12 @@ namespace SocialPoint.Commands
 #if DEBUG
                     Debug.Log("Image Download Completed");
 #endif
+
+                    // Wait three more seconds to appreciate the view
+                    //contextView.GetComponent<GameRoot>().StartCoroutine(WaitBeforeLoadComplete());
+
                     // Notify that all data are loaded and ready
-                    loadCompleteSignal.Dispatch(gameDataService.monsters,
+                   loadCompleteSignal.Dispatch(gameDataService.monsters,
                                                 gameDataService.elements,
                                                 gameDataService.imageCache);
                     // Release the command
@@ -100,16 +105,26 @@ namespace SocialPoint.Commands
 
             // While downloading images the Current Load Progress is 
             // automatically updated
+            // Download Images will trigger updates on current load progress
             gameDataService.DownloadImages();
-            // As alternative we can create a IProgress and pass it as argument
-            //var pr = new Progress<float>(this.progressCallBack);
-            //gameDataService.DownloadImages(pr);
+            
         }
 
         //...this is used only if we use the IProgress interface as argument
         public void progressCallBack(float progress)
         {
             progressReport.Value = progress;
+        }
+
+        IEnumerator WaitBeforeLoadComplete()
+        {
+            yield return new WaitForSeconds(5.0f);
+            // Notify that all data are loaded and ready
+            loadCompleteSignal.Dispatch(gameDataService.monsters,
+                                        gameDataService.elements,
+                                        gameDataService.imageCache);
+            // Release the command
+            Release();
         }
 
         

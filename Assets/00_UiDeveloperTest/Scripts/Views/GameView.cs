@@ -11,10 +11,22 @@ using SocialPoint;
 
 public class GameView : View {
 
+    public Canvas front_ui_effects_canvas;
+    public Canvas game_canvas;
+    public Canvas background_canvas;
+
+
     // On Awake
     protected override void Awake()
     {
         base.Awake();
+        front_ui_effects_canvas = this.transform.FindChild("FrontUIEffectsCanvas").GetComponent<Canvas>();
+        front_ui_effects_canvas.worldCamera = Camera.main;
+        game_canvas = this.transform.FindChild("GameCanvas").GetComponent<Canvas>();
+        game_canvas.worldCamera = Camera.main;
+        background_canvas = this.transform.FindChild("BackgroundCanvas").GetComponent<Canvas>();
+        background_canvas.worldCamera = Camera.main;
+
     }
 
     // Reset view to default state

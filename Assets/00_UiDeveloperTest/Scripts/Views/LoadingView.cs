@@ -17,15 +17,20 @@ public class LoadingView : View
     public Slider progress_bar;
     public Text loading_text;
     public CanvasGroup canvas;
+    public GameObject progress_trail_fx;
 
     // On Awake
     protected override void Awake()
     {
         base.Awake();
         // Map view objects
-        progress_bar = this.transform.Find("progress_bar").GetComponent<Slider>();
-        loading_text = this.transform.Find("loading_text").GetComponent<Text>();
+        progress_bar = this.transform.FindChild("progress_bar").GetComponent<Slider>();
+        loading_text = this.transform.FindChild("loading_text").GetComponent<Text>();
         canvas = this.GetComponent<CanvasGroup>();
+        progress_trail_fx = progress_bar.gameObject.transform.FindChild("fill_area/fill/progress_trail_fx").gameObject;
+        progress_trail_fx.SetActive(true);
+
+       
 
     }
 
@@ -60,6 +65,7 @@ public class LoadingView : View
     #region VIEW ANIMATIONS CONTROLS
     public void HideView()
     {
+        progress_trail_fx.SetActive(false);
         TweenFactory.Tween("FadeOutCanvas", 1.0f, 0.0f, 0.5f, TweenScaleFunctions.CubicEaseOut,
             (t) => { this.canvas.alpha = t.CurrentValue; }, (t) => { this.canvas.alpha = t.CurrentValue; });
     }

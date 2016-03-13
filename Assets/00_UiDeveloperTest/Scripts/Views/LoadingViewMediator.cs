@@ -17,6 +17,10 @@ public class LoadingViewMediator : Mediator{
     [Inject]
     public LoadingView view { get; set; }
 
+    // Inject Localization service
+    [Inject]
+    public ILocalizationService localizationService { get; set; }
+
     // Injecting this one because we want to fire it
     [Inject]
     public LoadGameDataSignal loadGameDataSignal { get; set; }
@@ -31,6 +35,8 @@ public class LoadingViewMediator : Mediator{
 
     public bool isDataLoaded = false;
     private string[] randomPhrases = { "monsters", "gems", "pizzas", "coins", "trees", "colours", "ice creams" };
+    private string loadingTranslated;
+
 
     public override void OnRegister()
     {
@@ -50,9 +56,30 @@ public class LoadingViewMediator : Mediator{
 
     IEnumerator GenerateRandomPhrase()
     {
+        string currentLanguage = localizationService.LoadUserLanguage();
+
+        if (currentLanguage == "en")
+        {
+            loadingTranslated = "LOADING";
+        }
+        else if (currentLanguage == "es")
+        {
+            loadingTranslated = "CARGANDO";
+        }
+        else if (currentLanguage == "fr")
+        {
+            loadingTranslated = "CHARGEMENT";
+        }
+        else if (currentLanguage == "ru")
+        {
+            loadingTranslated = "ЗАГРУЗКА";
+        }
+
+
         while( !isDataLoaded )
         {
-            loadingRandomPhrase.Value = "LOADING..." + randomPhrases[UnityEngine.Random.Range(0, randomPhrases.Length)];
+
+            loadingRandomPhrase.Value = loadingTranslated + "..." + randomPhrases[UnityEngine.Random.Range(0, randomPhrases.Length)];
             //loadProgress.Value = UnityEngine.Random.Range(0.1f, 0.95f);
             yield return new WaitForSeconds(1.0f);
         }
