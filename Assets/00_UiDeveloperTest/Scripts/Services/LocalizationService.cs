@@ -12,20 +12,26 @@ namespace SocialPoint
         private string k_lang = "k_lang";
 
         [SerializeField]
-        private ReactiveDictionary<string, string> strings;
+        private ReactiveDictionary<string, StringReactiveProperty> strings;
 
 
         public LocalizationService()
         {           
         }
-
+        
         public void LoadDictionary(Dictionary<string, string> dict)
         {
-            strings = new ReactiveDictionary<string, string>(dict);
+            strings = new ReactiveDictionary<string, StringReactiveProperty>();
+
+            foreach( var elem in dict )
+            {
+                strings.Add(elem.Key, new StringReactiveProperty(elem.Value));
+            }
         }
 
         /// Get a string by key based on current loaded locale
-        public string GetString(string key)
+        /// it's reactive if we want to subscribe to its value
+        public StringReactiveProperty GetString(string key)
         {
             if( strings.ContainsKey(key) )
             {

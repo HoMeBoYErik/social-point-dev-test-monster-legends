@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using strange.extensions.context.api;
 using strange.extensions.context.impl;
 using strange.extensions.dispatcher.eventdispatcher.api;
 using strange.extensions.dispatcher.eventdispatcher.impl;
 using strange.extensions.command.api;
 using strange.extensions.command.impl;
+using UniRx;
 using SocialPoint.Commands;
 
 using SocialPoint.Signals;
@@ -14,6 +16,7 @@ namespace SocialPoint
 {
     public class GameContext : MVCSContext
     {
+        
         
         public GameContext (MonoBehaviour view) : base (view)
         {
@@ -69,11 +72,15 @@ namespace SocialPoint
             GameDataService gameDataService = (this.contextView as GameObject).GetComponent<GameDataService>();
             injectionBinder.Bind<GameDataService>().ToValue(gameDataService);
 
-            // Evaluate if inject directly the monster list structure
-            // and also the image cache
-
             LocalizationService localizationService = (this.contextView as GameObject).GetComponent<LocalizationService>();
             injectionBinder.Bind<ILocalizationService>().ToValue(localizationService);
+
+
+            // Map gameobjects factories
+            GameRoot root = (this.contextView as GameObject).GetComponent<GameRoot>();
+            // TODO switch screen resolution to determine which prefab
+            injectionBinder.Bind<GameObject>().ToValue(root.monster_row_prefab).ToName("MonsterRowPrefab");
+            injectionBinder.Bind<MonsterRowFactory>().ToSingleton();
 
             // Map views with their mediators/presenters
             mediationBinder.Bind<GameView>().To<GameViewMediator>();
@@ -86,6 +93,10 @@ namespace SocialPoint
 
             // Bind Signals to context
             injectionBinder.Bind<LoadCompleteSignal>().ToSingleton(); // when load sequence end
+
+
+            // Bind prefabs based on configuration
+
 
         }
     }

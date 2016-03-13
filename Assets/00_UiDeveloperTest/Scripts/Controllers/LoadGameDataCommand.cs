@@ -34,7 +34,12 @@ namespace SocialPoint.Commands
         {
             Retain();
 
+            // Move this to a service method
             string lang = localizationService.LoadUserLanguage();
+            //lang = "ru";
+            //lang = "en";
+            //lang = "es";
+            //lang = "fr";
             gameDataService.LoadData(lang)
                .Subscribe(
                    x => OnDataReady(x),    // on success
@@ -85,7 +90,9 @@ namespace SocialPoint.Commands
                     Debug.Log("Image Download Completed");
 #endif
                     // Notify that all data are loaded and ready
-                    loadCompleteSignal.Dispatch();
+                    loadCompleteSignal.Dispatch(gameDataService.monsters,
+                                                gameDataService.elements,
+                                                gameDataService.imageCache);
                     // Release the command
                     Release();
                 }

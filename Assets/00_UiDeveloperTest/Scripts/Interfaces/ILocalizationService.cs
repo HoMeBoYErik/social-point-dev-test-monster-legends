@@ -12,7 +12,7 @@ namespace SocialPoint
         string Language { get; set; }
 
         void LoadDictionary(Dictionary<string, string> dict);
-        string GetString(string key);
+        StringReactiveProperty GetString(string key);
         string LoadUserLanguage();
         void SetUserLanguage(string lang);
         bool isValidLanguage(string lang);

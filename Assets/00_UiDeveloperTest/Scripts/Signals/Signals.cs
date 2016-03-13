@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using strange.extensions.signal.impl;
 using UniRx;
 
@@ -11,7 +12,10 @@ namespace SocialPoint.Signals
 
     // FloatReactiveProperty is to notify load progress
     public class LoadGameDataSignal : Signal<FloatReactiveProperty> { }
-    public class LoadCompleteSignal : Signal { }
+    // Payload will be monsters list, elements list and images collection
+    public class LoadCompleteSignal : Signal<ReactiveCollection<MonsterDataModel>,
+                                              ReactiveDictionary<string, ElementDataModel>,
+                                              Dictionary<string, Texture2D>> { }
     #endregion
 
 }

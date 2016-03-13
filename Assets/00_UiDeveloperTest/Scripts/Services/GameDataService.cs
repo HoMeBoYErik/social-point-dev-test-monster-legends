@@ -14,12 +14,12 @@ namespace SocialPoint
         public static string GameDataUrl = "http://sp-mobiledistribution-000.laicosp.net/uidevtest/?lang={0}";
 
         // Subscribe to data stream to receive the game data list (JSON string format)
-        public IObservable<string> dataStream;
+        private IObservable<string> dataStream;
 
         [SerializeField]
-        public ReactiveDictionary<string, ElementDataModel> elements; // elements image thumbs (fire, nature, air, etc...)
-        [SerializeField]   
-        public ReactiveCollection<MonsterDataModel> monsters;  //monsters data list        
+        public ReactiveDictionary<string, ElementDataModel> elements = new ReactiveDictionary<string, ElementDataModel>(); // elements image thumbs (fire, nature, air, etc...)
+        [SerializeField]
+        public ReactiveCollection<MonsterDataModel> monsters = new ReactiveCollection<MonsterDataModel>();  //monsters data list        
 
         public FloatReactiveProperty CurrentLoadProgress;
         //public FloatReactiveProperty progress;
@@ -32,15 +32,12 @@ namespace SocialPoint
         
         // We store the cached images here
         [SerializeField]
-        private Dictionary<string, Texture2D> _imageCache = new Dictionary<string, Texture2D>();
+        public Dictionary<string, Texture2D> imageCache = new Dictionary<string, Texture2D>();
         // How many times we retry to download an image request after a download failure
         public int DownloadRetryTimes = 3;
 
-        public float TotalDownloadProgress = 0.0f;
-        public float TotalStartedRequests = 0.0f;
-        public float TotalCompletedRequests = 0.0f;
-        
-
+       
+  
         public void progressReport(float progress)
         {
             Debug.Log("Progress is " + progress);
@@ -84,7 +81,7 @@ namespace SocialPoint
                             url =>
                             {
 #if DEBUG
-                                Debug.Log("Starting download process for " + url);
+                                //Debug.Log("Starting download process for " + url);
 #endif
                                 GetWWWTexture(url, new Progress<float>(x =>
                                 {                                    
@@ -100,9 +97,9 @@ namespace SocialPoint
                                     .Subscribe(
                                         tex =>
                                         {
-                                            this._imageCache[url] = tex; // On success - store the downloaded image to dictionary cache
+                                            this.imageCache[url] = tex; // On success - store the downloaded image to dictionary cache
 #if DEBUG
-                                            Debug.Log("Ended download process for " + url);
+                                            //Debug.Log("Ended download process for " + url);
 #endif
                                             _requestDownloadProgress[url] = 1.0f;
 
@@ -175,24 +172,7 @@ namespace SocialPoint
                 tex = null;
             }
         }
-
-       
-        private void UpdateRequestDownloadProgress(string requestUrl, float progress)
-        {
-            _requestDownloadProgress[requestUrl] = 0 + progress;           
-        }
-
-        public void UpdateDownloadProgress(Texture2D texture)
-        {
-            TotalCompletedRequests++;
-            TotalDownloadProgress = TotalCompletedRequests / TotalStartedRequests;
-
-            if (TotalDownloadProgress == 1)
-            {
-                // Send event that all data has been downloaded and are ready to be used
-                Debug.Log("Download of images completed");
-            }
-        }       
+      
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -65,7 +66,9 @@ public class LoadingViewMediator : Mediator{
     }
 
     #region Signals Received Listeners
-    private void OnLoadComplete()
+    private void OnLoadComplete(ReactiveCollection<MonsterDataModel> monsters,
+                                 ReactiveDictionary<string, ElementDataModel> elements,
+                                 Dictionary<string, Texture2D> images)
     {
         view.HideView();
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -17,16 +18,242 @@ public class MonsterSelectionViewMediator : Mediator {
     [Inject]
     public MonsterSelectionView view { get; set; }
 
+    // Inject the localization service to translate the view
+    [Inject]
+    public ILocalizationService localizationService { get; set; }
+
+    // Inject the gameobject prefab factory for monster row
+    [Inject]
+    public MonsterRowFactory monsterRowFactory { get; set; }
+
+
+    // Signals we want to listen to
+    [Inject]
+    public LoadCompleteSignal loadCompleteSignal { get; set; }
+
+    private StringReactiveProperty breedingButtonText;
+    private string breedingButtonNormalText;
+    private string breedingButtonSelectedText;
+
+    private ReactiveCollection<MonsterDataModel> monsters;
+    private ReactiveDictionary<string, ElementDataModel> elements;
+    private Dictionary<string, Texture2D> images;
+
+    public MonsterRowView leftSelectedMonster = null;
+    public MonsterRowView rightSelectedMonster = null;
+
     public override void OnRegister()
     {
         base.OnRegister();
 
         // Init view
         view.init();
+        // Map string dictionary to label text
+        loadCompleteSignal.AddListener(OnLoadComplete);
+        
     }
 
     public override void OnRemove()
     {
         base.OnRemove();
+        loadCompleteSignal.RemoveListener(OnLoadComplete);
     }
+
+    private void OnLoadComplete( ReactiveCollection<MonsterDataModel> monsters,
+                                 ReactiveDictionary<string, ElementDataModel> elements,
+                                 Dictionary<string, Texture2D> images )
+    {
+        localizationService.GetString("title").Subscribe(x => view.header_title_text.text = x.ToUpper());
+
+        // Init breeding button text values
+        breedingButtonNormalText = localizationService.GetString("select_button").Value;
+        breedingButtonSelectedText = localizationService.GetString("select_button_selected").Value;
+        breedingButtonText = new StringReactiveProperty(breedingButtonNormalText);       
+        breedingButtonText.Subscribe(x => view.breeding_button_text.text = x.ToUpper());
+        this.DisableBreeding();
+
+        this.monsters = monsters;
+        this.elements = elements;
+        this.images = images;
+    
+        // Load Monster Lists inside scrollers views
+        for (int i = 0; i < monsters.Count; ++i )
+        {
+            // Fill RIGHT LIST
+            GameObject goR = monsterRowFactory.Create();
+            goR.name = "monster_right_0" + i.ToString();
+            goR.transform.SetParent(view.right_list_root, false);
+            // Init monster view with info from model
+            MonsterDataModel m = monsters[i];
+            MonsterRowView mView = goR.transform.GetComponent<MonsterRowView>();
+            mView.init(i, MonsterRowView.TableSide.RIGHT); //assign to the view an id number
+            
+            // Assing click delegates
+            mView.OnMonsterClick += OnMonsterClick_NotSelected;            
+            mView.monster_thumb_image.texture = (Texture)images[m.thumb_img];
+            mView.monster_level_text.text = m.level.ToString();
+            mView.monster_name_text.text = m.name;
+            mView.monster_type_text.text = m.type;
+
+            int counter = 0;
+            foreach( string elemName in m.elements)
+            {
+                mView.monster_elements[counter].enabled = true;
+                mView.monster_elements[counter].texture = images[elements[elemName].img];
+                ++counter;
+            }
+
+            // Fill LEFT LIST
+            // Load Monster Lists inside scrollers     
+            GameObject goL = monsterRowFactory.Create();
+            goL.name = "monster_left_0" + i.ToString();
+            goL.transform.SetParent(view.left_list_root, false);
+            mView = goL.transform.GetComponent<MonsterRowView>();
+            mView.init(i, MonsterRowView.TableSide.LEFT); //assign to the view an id number
+            // Assing click delegates
+            mView.OnMonsterClick += OnMonsterClick_NotSelected;            
+            mView.monster_thumb_image.texture = (Texture)images[m.thumb_img];
+            mView.monster_level_text.text = m.level.ToString();
+            mView.monster_name_text.text = m.name;
+            mView.monster_type_text.text = m.type;
+
+            counter = 0;
+            foreach( string elemName in m.elements)
+            {
+                mView.monster_elements[counter].enabled = true;
+                mView.monster_elements[counter].texture = images[elements[elemName].img];
+                ++counter;
+            }           
+            
+        }
+
+        view.ShowView();
+    }
+
+    public void EnableBreeding()
+    {
+        view.breeding_button.interactable = true;
+        breedingButtonText.Value = breedingButtonSelectedText;
+
+        // Start hearth animation
+    }
+    public void DisableBreeding()
+    {
+        view.breeding_button.interactable = false;
+        breedingButtonText.Value = breedingButtonNormalText;
+    }
+
+    public void RefreshBreedingButton()
+    {
+        if( leftSelectedMonster != null && rightSelectedMonster != null )
+        {
+            EnableBreeding();
+            // TODO...Start animations on view
+        }
+        else
+        {
+            DisableBreeding();
+        }
+    }
+
+    public void OnMonsterClick_NotSelected(int id, MonsterRowView.TableSide tableSide)
+    {
+        MonsterRowView mv = null;
+        MonsterRowView mvMirror = null; // corresponding monster on the other side
+        //Debug.Log("Mediator monster button clicked with id " + id + "  and side "  +tableSide.ToString());
+        if( tableSide == MonsterRowView.TableSide.RIGHT )
+        {
+            mv = view.right_list_root.GetChild(id).GetComponent<MonsterRowView>();
+
+            // if a current selection on the right
+            if (this.rightSelectedMonster != null)
+            {
+                this.rightSelectedMonster.DeselectView();
+                // set delegates to not selected
+                SetDelegateToNotSelected(this.rightSelectedMonster);                
+
+                // ...also unlock left side monster
+                mvMirror = view.left_list_root.GetChild(this.rightSelectedMonster.id).GetComponent<MonsterRowView>(); 
+                mvMirror.ActivateView();
+            }
+
+            // update current selection value
+            this.rightSelectedMonster = mv;
+
+            // ...also lock left side monster
+            mvMirror = view.left_list_root.GetChild(id).GetComponent<MonsterRowView>();
+            mvMirror.DeactivateView();
+        }
+        else if (tableSide == MonsterRowView.TableSide.LEFT )
+        {
+            mv = view.left_list_root.GetChild(id).GetComponent<MonsterRowView>();
+            
+            if (this.leftSelectedMonster != null)
+            {
+                this.leftSelectedMonster.DeselectView();
+                // set delegates to not selected
+                SetDelegateToNotSelected(this.leftSelectedMonster);              
+
+                // ...also unlock right side monster
+                mvMirror = view.right_list_root.GetChild(this.leftSelectedMonster.id).GetComponent<MonsterRowView>();
+                mvMirror.ActivateView();
+            }
+            this.leftSelectedMonster = mv;
+            //  ...also lock right side monster
+            mvMirror = view.right_list_root.GetChild(id).GetComponent<MonsterRowView>();
+            mvMirror.DeactivateView();
+        }
+        if (mv != null)
+        {
+            mv.SelectView();
+            SetDelegateToSelected(mv);                   
+        }
+
+        RefreshBreedingButton();
+    }
+
+    public void OnMonsterClick_Selected(int id, MonsterRowView.TableSide tableSide)
+    {
+        MonsterRowView mv = null;
+        MonsterRowView mvMirror = null; // corresponding monster on the other side
+
+        if (tableSide == MonsterRowView.TableSide.RIGHT)
+        {
+            mv = view.right_list_root.GetChild(id).GetComponent<MonsterRowView>();
+            this.rightSelectedMonster = null;
+            // ...also unlock left side monster
+            mvMirror = view.left_list_root.GetChild(id).GetComponent<MonsterRowView>();
+            mvMirror.ActivateView();            
+        }
+        else if (tableSide == MonsterRowView.TableSide.LEFT)
+        {
+            mv = view.left_list_root.GetChild(id).GetComponent<MonsterRowView>();
+            this.leftSelectedMonster = null;
+            // TODO...also unlock right side monster
+            mvMirror = view.right_list_root.GetChild(id).GetComponent<MonsterRowView>();
+            mvMirror.ActivateView();         
+        }
+
+        if( mv != null)
+        {            
+            mv.DeselectView();
+            SetDelegateToNotSelected(mv);            
+        }
+
+        RefreshBreedingButton();       
+    }
+
+    private void SetDelegateToNotSelected(MonsterRowView mv)
+    {
+        mv.OnMonsterClick -= OnMonsterClick_Selected;
+        mv.OnMonsterClick += OnMonsterClick_NotSelected;
+    }
+
+    private void SetDelegateToSelected(MonsterRowView mv)
+    {
+        mv.OnMonsterClick -= OnMonsterClick_NotSelected;
+        mv.OnMonsterClick += OnMonsterClick_Selected;        
+    }
+
+    
 }
