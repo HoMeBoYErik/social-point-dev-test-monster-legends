@@ -29,6 +29,9 @@ public class MonsterSelectionViewMediator : Mediator {
     // Signals we want to listen to
     [Inject]
     public LoadCompleteSignal loadCompleteSignal { get; set; }
+    // Signal received when a breeding operation ended
+    [Inject]
+    public BreedingEndedReceivedSignal breedingEndedReceivedSignal { get; set; }
 
     // Signals we want to fire
     [Inject]
@@ -45,6 +48,8 @@ public class MonsterSelectionViewMediator : Mediator {
     public MonsterRowView leftSelectedMonster = null;
     public MonsterRowView rightSelectedMonster = null;
 
+    private bool isBreedingEnabled = false;
+
     public override void OnRegister()
     {
         base.OnRegister();
@@ -53,6 +58,7 @@ public class MonsterSelectionViewMediator : Mediator {
         view.init();
         // Map string dictionary to label text
         loadCompleteSignal.AddListener(OnLoadComplete);
+        breedingEndedReceivedSignal.AddListener(OnBreedingComplete);
         
     }
 
@@ -60,6 +66,7 @@ public class MonsterSelectionViewMediator : Mediator {
     {
         base.OnRemove();
         loadCompleteSignal.RemoveListener(OnLoadComplete);
+        breedingEndedReceivedSignal.RemoveListener(OnBreedingComplete);
         view.OnStartBreedingClick -= this.OnStartBreedingClick;
     }
 
@@ -135,6 +142,12 @@ public class MonsterSelectionViewMediator : Mediator {
         view.ShowView();
     }
 
+    private void OnBreedingComplete()
+    {
+        this.ResetAllSelections();
+        view.ShowView();
+    }
+
     public void ResetAllSelections()
     {
         OnMonsterClick_Selected(leftSelectedMonster.id, leftSelectedMonster.tableSide);
@@ -146,30 +159,52 @@ public class MonsterSelectionViewMediator : Mediator {
         RefreshBreedingButton();
     }
 
-    public void EnableBreeding()
+    IEnumerator EnableBreeding()
     {
+        // Start hearth animation
+        view.hearth_decoration_tweener.Stop();
+        view.hearth_decoration_button_tweener.Stop();
+        view.hearth_decoration_tweener.Play("FallDownFading");
+        view.hearth_decoration_button_tweener.Play("Appear");
+
+        // delay the button activation a bit
+        yield return new WaitForSeconds(0.7f);
+
         view.breeding_button.interactable = true;
         breedingButtonText.Value = breedingButtonSelectedText;
-
-        // Start hearth animation
+        
+        isBreedingEnabled = true;
+        
     }
-    public void DisableBreeding()
+    IEnumerator DisableBreeding()
     {
+        // if it was enabled play the appearing animation
+        if( isBreedingEnabled )
+        {
+            view.hearth_decoration_tweener.Stop();
+            view.hearth_decoration_tweener.Play("Appearing");
+            view.hearth_decoration_tweener.Play("HeartBit");
+            view.hearth_decoration_button_tweener.Stop();
+            view.hearth_decoration_button_tweener.Play("Disappear");
+        }        
+
         view.breeding_button.interactable = false;
         breedingButtonText.Value = breedingButtonNormalText;
+
+        isBreedingEnabled = false;
+
+        yield return null;
     }
 
     public void RefreshBreedingButton()
     {
         if( leftSelectedMonster != null && rightSelectedMonster != null )
         {
-            EnableBreeding();
-            // TODO...Start animations on view
-            // TODO...make this one a subscription to an observable
+           StartCoroutine( "EnableBreeding" );            
         }
         else
         {
-            DisableBreeding();
+           StartCoroutine( "DisableBreeding" );
         }
     }
 
@@ -178,6 +213,11 @@ public class MonsterSelectionViewMediator : Mediator {
         BreedingCoupleIdModel breedingCouple = new BreedingCoupleIdModel(leftSelectedMonster.id, rightSelectedMonster.id);
         startBreedingSignal.Dispatch(breedingCouple);
         view.HideView();
+    }
+
+    public void OnMonsterClick_PlaySound(AudioSource sound)
+    {
+        sound.Play();
     }
 
     public void OnMonsterClick_NotSelected(int id, MonsterRowView.TableSide tableSide)
@@ -234,6 +274,7 @@ public class MonsterSelectionViewMediator : Mediator {
         }
 
         RefreshBreedingButton();
+
     }
 
     public void OnMonsterClick_Selected(int id, MonsterRowView.TableSide tableSide)

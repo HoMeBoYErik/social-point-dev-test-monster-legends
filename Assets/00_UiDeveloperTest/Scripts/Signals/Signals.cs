@@ -23,6 +23,9 @@ namespace SocialPoint.Signals
     public class SpeedUpBreedingRequestSignal : Signal<BreedingStatusModel> { }
     public class NewSpeedUpBreedingRequestSignal : Signal<BreedingStatusModel> { }
     public class BreedingEndedSignal : Signal { }
+    public class BreedingEndedReceivedSignal : Signal { }
+    public class SpendGemsSignal : Signal<int> { }
+    public class BreedingSpeededUpSignal : Signal { }
     #endregion
 
 }

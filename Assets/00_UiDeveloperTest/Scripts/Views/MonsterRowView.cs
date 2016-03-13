@@ -26,6 +26,7 @@ public class MonsterRowView : View
 
     public Transform monster_selector;
     public Button monster_selector_button;
+    public AudioSource monster_click_sound;
 
     public delegate void MonsterClick(int id, TableSide tableSide);
     public MonsterClick OnMonsterClick;
@@ -69,6 +70,7 @@ public class MonsterRowView : View
         
         monster_selector = transform.FindChild("monster_box/monster_selector").transform;
         monster_selector_button = transform.FindChild("monster_box").GetComponent<Button>();
+        monster_click_sound = monster_selector_button.gameObject.GetComponent<AudioSource>();
 
        
     
@@ -98,6 +100,11 @@ public class MonsterRowView : View
         {
             OnMonsterClick(this.id, this.tableSide);
         });
+
+        monster_selector_button.onClick.AddListener(() =>
+            {
+                monster_click_sound.Play();
+            });
     }
 
 

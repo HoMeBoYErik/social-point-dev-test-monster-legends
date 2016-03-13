@@ -18,6 +18,8 @@ public class SpeedUpView : View{
     public Button speedup_button;
     public Text speedup_button_text;
     public Button popup_close_button;
+    public AudioSource popup_close_sound;
+    public AudioSource popup_open_sound;
 
     public CanvasGroup canvas;
 
@@ -40,7 +42,9 @@ public class SpeedUpView : View{
         speedup_button = transform.FindChild("popup_container/popup_speedup_button").GetComponent<Button>();
         speedup_button_text = transform.FindChild("popup_container/popup_speedup_button/speedup_button_text").GetComponent<Text>();
         popup_close_button = transform.FindChild("popup_container/popup_button_close").GetComponent<Button>();
+        popup_close_sound = popup_close_button.gameObject.GetComponent<AudioSource>();
         canvas = this.transform.GetComponent<CanvasGroup>();
+        popup_open_sound = this.GetComponent<AudioSource>();
     }
 
     // Reset view to default state
@@ -72,6 +76,10 @@ public class SpeedUpView : View{
             {
                 OnClosePopupClick();
             });
+        popup_close_button.onClick.AddListener(() =>
+            {
+                popup_close_sound.Play();
+            });
     }
 
     internal void init()
@@ -81,19 +89,28 @@ public class SpeedUpView : View{
     #region VIEW ANIMATIONS CONTROLS
     public void HideView()
     {
-        canvas.interactable = false;
-        canvas.blocksRaycasts = false;
+        if( this.canvas.alpha > 0)
+        {
+            canvas.interactable = false;
+            canvas.blocksRaycasts = false;
 
-        TweenFactory.Tween("FadeOutCanvas", 1.0f, 0.0f, 0.5f, TweenScaleFunctions.CubicEaseOut,
-            (t) => { this.canvas.alpha = t.CurrentValue; }, (t) => { this.canvas.alpha = t.CurrentValue; });
+            TweenFactory.Tween("FadeOutSpeedUpView", 1.0f, 0.0f, 0.5f, TweenScaleFunctions.CubicEaseOut,
+                (t) => { this.canvas.alpha = t.CurrentValue; }, (t) => { this.canvas.alpha = t.CurrentValue; });
+        }
+       
     }
     public void ShowView()
     {
-        canvas.interactable = true;
-        canvas.blocksRaycasts = true;
+        if (this.canvas.alpha < 1f)
+        {
+            popup_open_sound.Play();
 
-        TweenFactory.Tween("FadeInCanvas", 0.0f, 1.0f, 0.5f, TweenScaleFunctions.CubicEaseOut,
-            (t) => { this.canvas.alpha = t.CurrentValue; }, (t) => { this.canvas.alpha = t.CurrentValue; });
+            canvas.interactable = true;
+            canvas.blocksRaycasts = true;
+
+            TweenFactory.Tween("FadeInSpeedUpView", 0.0f, 1.0f, 0.5f, TweenScaleFunctions.CubicEaseOut,
+                (t) => { this.canvas.alpha = t.CurrentValue; }, (t) => { this.canvas.alpha = t.CurrentValue; });
+        }
     }
     #endregion
 }

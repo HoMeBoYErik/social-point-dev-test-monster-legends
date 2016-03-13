@@ -14,10 +14,13 @@ public class MonsterSelectionView : View {
     //Reference to view elements
     public Text header_title_text;
     public Button breeding_button;
+    public AudioSource start_breeding_sound;
     public Text breeding_button_text;
     public CanvasGroup canvas;
     public Transform right_list_root;
     public Transform left_list_root;
+    public Tweener hearth_decoration_tweener;
+    public Tweener hearth_decoration_button_tweener;
 
     public delegate void StartBreedingClick();
     public StartBreedingClick OnStartBreedingClick;
@@ -35,6 +38,8 @@ public class MonsterSelectionView : View {
         breeding_button = this.transform
             .Find("vertical_fit/breeding_button").GetComponent<Button>();
 
+        start_breeding_sound = breeding_button.gameObject.GetComponent<AudioSource>();
+
         breeding_button_text = breeding_button.GetComponentInChildren<Text>();
 
         canvas = this.GetComponent<CanvasGroup>();
@@ -42,6 +47,9 @@ public class MonsterSelectionView : View {
         // We use the tag here because the child is very deep down the hierarchy
         right_list_root = GameObject.FindGameObjectWithTag("RightListRoot").transform;
         left_list_root = GameObject.FindGameObjectWithTag("LeftListRoot").transform;
+
+        hearth_decoration_tweener = this.transform.FindChild("horizontal_fit/hearth_decoration").GetComponent<Tweener>();
+        hearth_decoration_button_tweener = this.transform.FindChild("vertical_fit/breeding_button_decoration_root").GetComponent<Tweener>();
     }
 
     // Reset view to default state
@@ -68,6 +76,11 @@ public class MonsterSelectionView : View {
         {
             OnStartBreedingClick();
         });
+
+        breeding_button.onClick.AddListener(() =>
+            {
+                start_breeding_sound.Play();
+            });
     }
 
     internal void init()

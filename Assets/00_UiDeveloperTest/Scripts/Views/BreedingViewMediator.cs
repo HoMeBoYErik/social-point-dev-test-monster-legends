@@ -26,10 +26,14 @@ public class BreedingViewMediator : Mediator
     public LoadCompleteSignal loadCompleteSignal { get; set; }
     [Inject]
     public NewBreedingCoupleSignal startBreedingSignal { get; set; }
+    [Inject]
+    public BreedingSpeededUpSignal breedingSpeededUpSignal { get; set; }
 
     // Signals we want to fire
     [Inject]
     public SpeedUpBreedingRequestSignal speedUpRequestSignal { get; set; }
+    [Inject]
+    public BreedingEndedSignal breedingEndedSignal { get; set; }
     
     private StringReactiveProperty speedUpButtonText = new StringReactiveProperty("");
     private IntReactiveProperty speedUpGemsRequired = new IntReactiveProperty(0);
@@ -53,6 +57,7 @@ public class BreedingViewMediator : Mediator
         view.init();
         loadCompleteSignal.AddListener(OnLoadComplete);
         startBreedingSignal.AddListener(OnBreedingStart);
+        breedingSpeededUpSignal.AddListener(OnBreedingSpeededUp);
 
         //Bind RX properties to view
         leftMonsterTex.Subscribe(tex => view.left_monster_image.texture = tex);
@@ -67,6 +72,7 @@ public class BreedingViewMediator : Mediator
         base.OnRemove();
         loadCompleteSignal.RemoveListener(OnLoadComplete);
         startBreedingSignal.RemoveListener(OnBreedingStart);
+        breedingSpeededUpSignal.RemoveListener(OnBreedingSpeededUp);
         view.OnSpeedUpClick -= this.OnSpeedUpClick;
     }
 
@@ -112,7 +118,7 @@ public class BreedingViewMediator : Mediator
 
         // Generate a random breeding time
         int breedingTime = UnityEngine.Random.Range(MinBreedingTime, MaxBreedingTime + 1);
-        StartCoroutine(BreedingProcess(breedingTime));
+        StartCoroutine("BreedingProcess", breedingTime);
 
         view.ShowView();
     }
@@ -138,13 +144,19 @@ public class BreedingViewMediator : Mediator
         this.OnBreedingEnded();
     }
 	
+    private void OnBreedingSpeededUp()
+    {
+        StopCoroutine("BreedingProcess");
+        this.OnBreedingEnded();
+    }
+
     private void OnBreedingEnded()
     {
         Debug.Log("Breeding Ended");
         view.HideView();
         // play a sound
         // Dispatch signal that breeding has completed
-
+        breedingEndedSignal.Dispatch();
        
     }
 }

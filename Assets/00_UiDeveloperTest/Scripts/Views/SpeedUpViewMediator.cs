@@ -21,16 +21,25 @@ public class SpeedUpViewMediator : Mediator {
     [Inject]
     public ILocalizationService localizationService { get; set; }
 
+    // Signals we want to fire
+    [Inject]
+    public SpendGemsSignal spendGemsSignal { get; set; }
+
     // Signals we want to listen to
     [Inject]
     public LoadCompleteSignal loadCompleteSignal { get; set; }
     [Inject]
     public NewSpeedUpBreedingRequestSignal newSpeedUpRequestSignal { get; set; }
+    // Signal received when a breeding operation ended
+    [Inject]
+    public BreedingEndedReceivedSignal breedingEndedReceivedSignal { get; set; }
 
 
     private StringReactiveProperty speedUpButtonText = new StringReactiveProperty("");
     private StringReactiveProperty popupText = new StringReactiveProperty("");
     private StringReactiveProperty hearthText = new StringReactiveProperty("");
+
+    private BreedingStatusModel breedingStatus;
 
     public override void OnRegister()
     {
@@ -40,6 +49,7 @@ public class SpeedUpViewMediator : Mediator {
         view.init();
         loadCompleteSignal.AddListener(OnLoadComplete);
         newSpeedUpRequestSignal.AddListener(OnNewSpeedUpRequest);
+        breedingEndedReceivedSignal.AddListener(OnBreedingComplete);
     }
 
     public override void OnRemove()
@@ -47,6 +57,7 @@ public class SpeedUpViewMediator : Mediator {
         base.OnRemove();
         loadCompleteSignal.RemoveListener(OnLoadComplete);
         newSpeedUpRequestSignal.RemoveListener(OnNewSpeedUpRequest);
+        breedingEndedReceivedSignal.RemoveListener(OnBreedingComplete);    
     }
 
     private void OnLoadComplete(ReactiveCollection<MonsterDataModel> monsters,
@@ -63,6 +74,12 @@ public class SpeedUpViewMediator : Mediator {
         view.OnClosePopupClick += OnClosePopupClick;
     }
 
+    private void OnBreedingComplete()
+    {
+        Debug.Log("Breeding Ended Popup view");
+        view.HideView();
+    }
+
     private void OnClosePopupClick()
     {
         view.HideView();
@@ -70,12 +87,13 @@ public class SpeedUpViewMediator : Mediator {
 
     private void OnSpendGemsClick()
     {
-        Debug.Log("Spend all the money");
+        spendGemsSignal.Dispatch(breedingStatus.gemsRequired.Value);
     }
 
     private void OnNewSpeedUpRequest(BreedingStatusModel status)
     {
-        status.timeLeft
+        breedingStatus = status;
+        breedingStatus.timeLeft
             .Subscribe(t =>
                 {
                     status.gemsRequired.Subscribe( gems =>

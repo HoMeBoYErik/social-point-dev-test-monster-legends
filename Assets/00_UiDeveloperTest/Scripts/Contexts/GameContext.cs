@@ -66,7 +66,8 @@ namespace SocialPoint
             commandBinder.Bind<LoadGameDataSignal>().To<LoadGameDataCommand>();
             commandBinder.Bind<StartBreedingSignal>().To<StartBreedingCommand>();
             commandBinder.Bind<SpeedUpBreedingRequestSignal>().To<SpeedUpBreedingRequestCommand>();
-
+            commandBinder.Bind<BreedingEndedSignal>().To<BreedingEndedCommand>();
+            commandBinder.Bind<SpendGemsSignal>().To<SpendGemsCommand>();
             // Class bindings to values
             // Instantiate any prefab (Monobehaviours) that we want to inject into other objects
             // And save reference
@@ -99,7 +100,10 @@ namespace SocialPoint
             injectionBinder.Bind<NewBreedingCoupleSignal>().ToSingleton(); 
             // when we want to notify a new breeding request to subscribers
             injectionBinder.Bind<NewSpeedUpBreedingRequestSignal>().ToSingleton();
-
+            // when a breeding operation ended we notify to others view from the command
+            injectionBinder.Bind<BreedingEndedReceivedSignal>().ToSingleton();
+            // when a user speed up the breeding process
+            injectionBinder.Bind<BreedingSpeededUpSignal>().ToSingleton();
 
             // Bind prefabs based on configuration
 

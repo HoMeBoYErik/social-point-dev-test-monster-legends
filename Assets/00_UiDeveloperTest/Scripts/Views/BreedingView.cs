@@ -22,6 +22,7 @@ public class BreedingView : View
     public RawImage left_monster_image;
     public Text left_monster_name_text;
     public CanvasGroup canvas;
+    public AudioSource breeding_complete_sound;
 
     //Buttons delegates
     public delegate void SpeedUpClick();
@@ -43,6 +44,7 @@ public class BreedingView : View
         left_monster_image = transform.FindChild("horizontal_fit/left_breeding_panel/left_image_frame/left_monster_image").GetComponent<RawImage>();
         left_monster_name_text = transform.FindChild("horizontal_fit/left_breeding_panel/left_image_frame/left_monster_name_text").GetComponent<Text>();
         canvas = this.transform.GetComponent<CanvasGroup>();
+        breeding_complete_sound = this.GetComponent<AudioSource>();
 
 
 
@@ -82,10 +84,12 @@ public class BreedingView : View
     #region VIEW ANIMATIONS CONTROLS
     public void HideView()
     {
+        breeding_complete_sound.Play();
+
         canvas.interactable = false;
         canvas.blocksRaycasts = false;
 
-        TweenFactory.Tween("FadeOutCanvas", 1.0f, 0.0f, 0.5f, TweenScaleFunctions.CubicEaseOut,
+        TweenFactory.Tween("FadeOutBreedingView", 1.0f, 0.0f, 0.5f, TweenScaleFunctions.CubicEaseOut,
             (t) => { this.canvas.alpha = t.CurrentValue; }, (t) => { this.canvas.alpha = t.CurrentValue; });
     }
     public void ShowView()
@@ -93,7 +97,7 @@ public class BreedingView : View
         canvas.interactable = true;
         canvas.blocksRaycasts = true;
 
-        TweenFactory.Tween("FadeInCanvas", 0.0f, 1.0f, 0.5f, TweenScaleFunctions.CubicEaseOut,
+        TweenFactory.Tween("FadeInBreedingView", 0.0f, 1.0f, 0.5f, TweenScaleFunctions.CubicEaseOut,
             (t) => { this.canvas.alpha = t.CurrentValue; }, (t) => { this.canvas.alpha = t.CurrentValue; });
     }
     #endregion
