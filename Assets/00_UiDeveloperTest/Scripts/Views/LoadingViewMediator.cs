@@ -46,7 +46,7 @@ public class LoadingViewMediator : Mediator{
         view.init();
         loadingRandomPhrase.SubscribeToText(view.random_phrase);
         loadProgress.Subscribe(x => view.progress_bar.value = x);
-        StartCoroutine(GenerateRandomPhrase());
+        StartCoroutine("GenerateRandomPhrase");
         // We are ready to load game data
         // Listen for when all the data will be ready
         loadCompleteSignal.AddListener(OnLoadComplete);
@@ -96,6 +96,7 @@ public class LoadingViewMediator : Mediator{
                                  ReactiveDictionary<string, ElementDataModel> elements,
                                  Dictionary<string, Texture2D> images)
     {
+        StopCoroutine("GenerateRandomPhrase");
         view.HideView();
     }
     #endregion
