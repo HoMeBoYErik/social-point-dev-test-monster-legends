@@ -12,7 +12,7 @@ namespace SocialPoint
         private string k_lang = "k_lang";
 
         [SerializeField]
-        private ReactiveDictionary<string, StringReactiveProperty> strings;
+        private Dictionary<string, StringReactiveProperty> strings;
 
 
         public LocalizationService()
@@ -21,7 +21,7 @@ namespace SocialPoint
         
         public void LoadDictionary(Dictionary<string, string> dict)
         {
-            strings = new ReactiveDictionary<string, StringReactiveProperty>();
+            strings = new Dictionary<string, StringReactiveProperty>();
 
             foreach( var elem in dict )
             {

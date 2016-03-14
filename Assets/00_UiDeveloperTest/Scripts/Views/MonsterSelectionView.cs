@@ -65,7 +65,7 @@ public class MonsterSelectionView : View {
 
         // Determine screen aspect ratio to select row element prefab
         float aspectRatio = (float)Screen.width / (float)Screen.height;
-        Debug.Log("Aspect ratio " + aspectRatio);
+        //Debug.Log("Aspect ratio " + aspectRatio);
 
         
         // Changed Grid Layout cell based on aspect ratio

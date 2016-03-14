@@ -91,8 +91,8 @@ public class BreedingViewMediator : Mediator
         view.OnRightMonsterDescriptionClick -= this.OnRightInfoClick;
     }
 
-    private void OnLoadComplete(ReactiveCollection<MonsterDataModel> monsters,
-                                 ReactiveDictionary<string, ElementDataModel> elements,
+    private void OnLoadComplete(List<MonsterDataModel> monsters,
+                                 Dictionary<string, ElementDataModel> elements,
                                  Dictionary<string, Texture2D> images)
     {
         // Header of the view

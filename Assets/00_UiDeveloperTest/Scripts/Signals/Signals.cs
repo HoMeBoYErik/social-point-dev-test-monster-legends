@@ -13,8 +13,8 @@ namespace SocialPoint.Signals
     // FloatReactiveProperty is to notify load progress
     public class LoadGameDataSignal : Signal<FloatReactiveProperty> { }
     // Payload will be monsters list, elements list and images collection
-    public class LoadCompleteSignal : Signal<ReactiveCollection<MonsterDataModel>,
-                                              ReactiveDictionary<string, ElementDataModel>,
+    public class LoadCompleteSignal : Signal<List<MonsterDataModel>,
+                                              Dictionary<string, ElementDataModel>,
                                               Dictionary<string, Texture2D>> { }
 
     

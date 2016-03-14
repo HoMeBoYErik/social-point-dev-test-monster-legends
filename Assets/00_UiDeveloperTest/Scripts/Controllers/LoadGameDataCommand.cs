@@ -83,7 +83,7 @@ namespace SocialPoint.Commands
                     progressReport.Value = x;                    
                     
                 },
-                ex => { Debug.LogException(ex); Fail(); Release(); },
+                ex => { Debug.LogException(ex); },//Fail();// Release(); },
                 () =>
                 {
                     progressReport.Value = 1.0f;

@@ -17,9 +17,9 @@ namespace SocialPoint
         private IObservable<string> dataStream;
 
         [SerializeField]
-        public ReactiveDictionary<string, ElementDataModel> elements = new ReactiveDictionary<string, ElementDataModel>(); // elements image thumbs (fire, nature, air, etc...)
+        public Dictionary<string, ElementDataModel> elements = new Dictionary<string, ElementDataModel>(); // elements image thumbs (fire, nature, air, etc...)
         [SerializeField]
-        public ReactiveCollection<MonsterDataModel> monsters = new ReactiveCollection<MonsterDataModel>();  //monsters data list        
+        public List<MonsterDataModel> monsters = new List<MonsterDataModel>();  //monsters data list        
 
         public FloatReactiveProperty CurrentLoadProgress;
         //public FloatReactiveProperty progress;
@@ -28,7 +28,7 @@ namespace SocialPoint
         //private Dictionary<string, int> _requestCounter = new Dictionary<string, int>();
         // We store requests download progress here so the GUI can interrogate it and show progress
         [SerializeField]
-        public ReactiveDictionary<string, float> _requestDownloadProgress = new ReactiveDictionary<string, float>();
+        public Dictionary<string, float> _requestDownloadProgress = new Dictionary<string, float>();
         
         // We store the cached images here
         [SerializeField]
@@ -56,12 +56,12 @@ namespace SocialPoint
             return dataStream;
         }
 
-        public void LoadElements(ReactiveDictionary<string, ElementDataModel> e)
+        public void LoadElements(Dictionary<string, ElementDataModel> e)
         {
             elements = e;            
         }
 
-        public void LoadMonsters(ReactiveCollection<MonsterDataModel> m)
+        public void LoadMonsters(List<MonsterDataModel> m)
         {
             monsters = m;
         }

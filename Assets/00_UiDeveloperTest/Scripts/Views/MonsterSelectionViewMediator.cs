@@ -43,8 +43,8 @@ public class MonsterSelectionViewMediator : Mediator {
     private string breedingButtonNormalText;
     private string breedingButtonSelectedText;
 
-    private ReactiveCollection<MonsterDataModel> monsters;
-    private ReactiveDictionary<string, ElementDataModel> elements;
+    private List<MonsterDataModel> monsters;
+    private Dictionary<string, ElementDataModel> elements;
     private Dictionary<string, Texture2D> images;
 
     public MonsterRowView leftSelectedMonster = null;
@@ -73,8 +73,8 @@ public class MonsterSelectionViewMediator : Mediator {
         view.OnStartBreedingClick -= this.OnStartBreedingClick;
     }
 
-    private void OnLoadComplete( ReactiveCollection<MonsterDataModel> monsters,
-                                 ReactiveDictionary<string, ElementDataModel> elements,
+    private void OnLoadComplete( List<MonsterDataModel> monsters,
+                                 Dictionary<string, ElementDataModel> elements,
                                  Dictionary<string, Texture2D> images )
     {
         localizationService.GetString("title").Subscribe(x => view.header_title_text.text = x.ToUpper());
