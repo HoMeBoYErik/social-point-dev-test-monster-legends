@@ -28,6 +28,7 @@ public class MonsterRowView : View
     public Button monster_selector_button;
     public AudioSource monster_click_sound;
 
+    // View delegate when the user click on a monster row
     public delegate void MonsterClick(int id, TableSide tableSide);
     public MonsterClick OnMonsterClick;
 
@@ -58,8 +59,8 @@ public class MonsterRowView : View
         monster_thumb = transform.FindChild("monster_thumb").GetComponent<Image>();
         monster_thumb_image = transform.FindChild("monster_thumb/monster_thumb_image").GetComponent<RawImage>();
         monster_level_text = transform.FindChild("monster_box/monster_star/monster_level_text").GetComponent<Text>();
-        monster_name_text = transform.FindChild("monster_box/monster_name_text").GetComponent<Text>();
-        monster_type_text = transform.FindChild("monster_box/monster_type_text").GetComponent<Text>();
+        monster_name_text = transform.FindChild("monster_box/monster_star/monster_name_text").GetComponent<Text>();
+        monster_type_text = transform.FindChild("monster_box/monster_star/monster_type_text").GetComponent<Text>();
         monster_box = transform.FindChild("monster_box").GetComponent<Image>();
         monster_elements[0] = transform.FindChild("monster_box/monster_elements/monster_element_0").GetComponent<RawImage>();
         monster_elements[0].enabled = false;
@@ -71,9 +72,6 @@ public class MonsterRowView : View
         monster_selector = transform.FindChild("monster_box/monster_selector").transform;
         monster_selector_button = transform.FindChild("monster_box").GetComponent<Button>();
         monster_click_sound = monster_selector_button.gameObject.GetComponent<AudioSource>();
-
-       
-    
     }
 
     // Reset view to default state

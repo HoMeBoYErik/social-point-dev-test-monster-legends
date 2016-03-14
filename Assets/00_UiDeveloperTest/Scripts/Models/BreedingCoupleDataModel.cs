@@ -18,6 +18,8 @@ namespace SocialPoint
         public int leftMonsterLevel;
         [SerializeField]
         public string leftMonsterDescription;
+        [SerializeField]
+        public string leftMonsterType;
 
         [SerializeField]
         public int rightMonsterId;
@@ -28,7 +30,9 @@ namespace SocialPoint
         [SerializeField]
         public int rightMonsterLevel;
         [SerializeField]
-        public string rightMonsterDescription;       
+        public string rightMonsterDescription;
+        [SerializeField]
+        public string rightMonsterType;
 
 
         public BreedingCoupleDataModel()

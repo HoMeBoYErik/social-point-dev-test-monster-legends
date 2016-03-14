@@ -26,6 +26,8 @@ namespace SocialPoint.Signals
     public class BreedingEndedReceivedSignal : Signal { }
     public class SpendGemsSignal : Signal<int> { }
     public class BreedingSpeededUpSignal : Signal { }
+    public class OpenLanguagePanelSignal : Signal { }
+    public class SpeedUpPopupDismissed : Signal { }
     #endregion
 
 }

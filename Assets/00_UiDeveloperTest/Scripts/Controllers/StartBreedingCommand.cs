@@ -37,6 +37,7 @@ namespace SocialPoint.Commands
             coupleData.leftMonsterDescription = monsters[coupleId.leftMonsterId].description;
             coupleData.leftMonsterLevel = monsters[coupleId.leftMonsterId].level;
             coupleData.leftMonsterTex = images[monsters[coupleId.leftMonsterId].full_img];
+            coupleData.leftMonsterType = monsters[coupleId.leftMonsterId].type;
 
             // Creating right element
             coupleData.rightMonsterId = coupleId.rightMonsterId;
@@ -44,6 +45,7 @@ namespace SocialPoint.Commands
             coupleData.rightMonsterDescription = monsters[coupleId.rightMonsterId].description;
             coupleData.rightMonsterLevel = monsters[coupleId.rightMonsterId].level;
             coupleData.rightMonsterTex = images[monsters[coupleId.rightMonsterId].full_img];
+            coupleData.rightMonsterType = monsters[coupleId.rightMonsterId].type;
 
 
             newCoupleSignal.Dispatch(coupleData);

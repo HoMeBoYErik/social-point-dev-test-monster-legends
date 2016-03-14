@@ -88,7 +88,7 @@ namespace SocialPoint.Commands
                 {
                     progressReport.Value = 1.0f;
 #if DEBUG
-                    Debug.Log("Image Download Completed");
+                    //Debug.Log("Image Download Completed");
 #endif
 
                     // Wait three more seconds to appreciate the view

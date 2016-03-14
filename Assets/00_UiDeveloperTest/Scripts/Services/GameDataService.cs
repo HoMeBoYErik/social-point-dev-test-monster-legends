@@ -116,7 +116,7 @@ namespace SocialPoint
                             },
                             () => { 
 #if DEBUG
-                                Debug.Log("Completed download schedule of all images ");
+                               // Debug.Log("Completed download schedule of all images ");
 #endif
                             }
                  );

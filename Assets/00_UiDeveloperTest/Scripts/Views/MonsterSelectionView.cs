@@ -12,8 +12,12 @@ using SocialPoint;
 public class MonsterSelectionView : View {
 
     //Reference to view elements
+    public RectTransform right_selection_panel;
+    public RectTransform left_selection_panel;
+
     public Text header_title_text;
     public Button breeding_button;
+    public Button language_button;
     public AudioSource start_breeding_sound;
     public Text breeding_button_text;
     public CanvasGroup canvas;
@@ -25,11 +29,17 @@ public class MonsterSelectionView : View {
     public delegate void StartBreedingClick();
     public StartBreedingClick OnStartBreedingClick;
 
+    public delegate void OpenLanguagePanelClick();
+    public OpenLanguagePanelClick OnOpenLanguagePanelClick;
+
 
     // On Awake
     protected override void Awake()
     {
         base.Awake();
+
+        right_selection_panel = this.transform.FindChild("horizontal_fit/right_monster_selection_panel").GetComponent<RectTransform>();
+        left_selection_panel = this.transform.FindChild("horizontal_fit/left_monster_selection_panel").GetComponent<RectTransform>();
 
         header_title_text = this.transform
             .Find("vertical_fit/header/header_title_text")
@@ -42,6 +52,8 @@ public class MonsterSelectionView : View {
 
         breeding_button_text = breeding_button.GetComponentInChildren<Text>();
 
+        language_button = this.transform.FindChild("vertical_fit/language_button").GetComponent<Button>();
+
         canvas = this.GetComponent<CanvasGroup>();
 
         // We use the tag here because the child is very deep down the hierarchy
@@ -50,6 +62,38 @@ public class MonsterSelectionView : View {
 
         hearth_decoration_tweener = this.transform.FindChild("horizontal_fit/hearth_decoration").GetComponent<Tweener>();
         hearth_decoration_button_tweener = this.transform.FindChild("vertical_fit/breeding_button_decoration_root").GetComponent<Tweener>();
+
+        // Determine screen aspect ratio to select row element prefab
+        float aspectRatio = (float)Screen.width / (float)Screen.height;
+        Debug.Log("Aspect ratio " + aspectRatio);
+
+        
+        // Changed Grid Layout cell based on aspect ratio
+        // 4:3 or squared ( like iPad wide )
+        if (aspectRatio <= 1.34f)
+        {
+            right_list_root.GetComponent<GridLayoutGroup>().cellSize = new Vector2(380f, 90f);
+            left_list_root.GetComponent<GridLayoutGroup>().cellSize = new Vector2(380f, 90f);
+            right_selection_panel.sizeDelta = new Vector2(right_selection_panel.sizeDelta.x, 400f);
+            left_selection_panel.sizeDelta = new Vector2(left_selection_panel.sizeDelta.x, 400f);
+
+            
+        }
+        // iPhone 4 or normal wide
+        else if (aspectRatio <= 1.52f)
+        {
+            right_list_root.GetComponent<GridLayoutGroup>().cellSize = new Vector2(400f, 90f);
+            left_list_root.GetComponent<GridLayoutGroup>().cellSize = new Vector2(400f, 90f);
+        }
+        else
+        {
+            right_selection_panel.offsetMax = new Vector2(-90f, right_selection_panel.offsetMax.y);
+            left_selection_panel.offsetMin = new Vector2(90f, left_selection_panel.offsetMin.y);
+            //right_list_root.GetComponent<GridLayoutGroup>().cellSize = new Vector2(450f, 90f);
+            //left_list_root.GetComponent<GridLayoutGroup>().cellSize = new Vector2(450f, 90f);
+        }
+    
+    
     }
 
     // Reset view to default state
@@ -80,6 +124,11 @@ public class MonsterSelectionView : View {
         breeding_button.onClick.AddListener(() =>
             {
                 start_breeding_sound.Play();
+            });
+
+        language_button.onClick.AddListener(() =>
+            {
+                OnOpenLanguagePanelClick();
             });
     }
 

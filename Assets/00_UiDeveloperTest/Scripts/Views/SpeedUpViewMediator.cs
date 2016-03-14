@@ -24,6 +24,8 @@ public class SpeedUpViewMediator : Mediator {
     // Signals we want to fire
     [Inject]
     public SpendGemsSignal spendGemsSignal { get; set; }
+    [Inject]
+    public SpeedUpPopupDismissed dismissedPopup { get; set; }
 
     // Signals we want to listen to
     [Inject]
@@ -33,6 +35,8 @@ public class SpeedUpViewMediator : Mediator {
     // Signal received when a breeding operation ended
     [Inject]
     public BreedingEndedReceivedSignal breedingEndedReceivedSignal { get; set; }
+
+
 
 
     private StringReactiveProperty speedUpButtonText = new StringReactiveProperty("");
@@ -67,8 +71,10 @@ public class SpeedUpViewMediator : Mediator {
         // Header of the view
         localizationService.GetString("complete_title").Subscribe(x => view.popup_title_text.text = x.ToUpper());
         speedUpButtonText = new StringReactiveProperty(localizationService.GetString("speedup_button").Value);
-        hearthText = new StringReactiveProperty(localizationService.GetString("complete_heart").Value);
+        hearthText = new StringReactiveProperty(localizationService.GetString("complete_heart").Value.ToUpper());
         popupText = new StringReactiveProperty(localizationService.GetString("complete_message").Value);
+
+        hearthText.SubscribeToText(view.heart_root_text);
 
         view.OnSpendGemsClick += OnSpendGemsClick;
         view.OnClosePopupClick += OnClosePopupClick;
@@ -82,6 +88,7 @@ public class SpeedUpViewMediator : Mediator {
 
     private void OnClosePopupClick()
     {
+        dismissedPopup.Dispatch();
         view.HideView();
     }
 
@@ -112,6 +119,8 @@ public class SpeedUpViewMediator : Mediator {
                         });
                 }
             );
+
+        
        
         view.ShowView();
     }

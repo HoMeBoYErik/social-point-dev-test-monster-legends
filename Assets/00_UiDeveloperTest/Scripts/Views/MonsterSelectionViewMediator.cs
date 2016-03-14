@@ -36,6 +36,8 @@ public class MonsterSelectionViewMediator : Mediator {
     // Signals we want to fire
     [Inject]
     public StartBreedingSignal startBreedingSignal { get; set; }
+    [Inject]
+    public OpenLanguagePanelSignal openLanguagePanelSignal { get; set; }
 
     private StringReactiveProperty breedingButtonText;
     private string breedingButtonNormalText;
@@ -59,6 +61,7 @@ public class MonsterSelectionViewMediator : Mediator {
         // Map string dictionary to label text
         loadCompleteSignal.AddListener(OnLoadComplete);
         breedingEndedReceivedSignal.AddListener(OnBreedingComplete);
+        view.OnOpenLanguagePanelClick += OnOpenLanguagePanelClick;
         
     }
 
@@ -318,6 +321,11 @@ public class MonsterSelectionViewMediator : Mediator {
     {
         mv.OnMonsterClick -= OnMonsterClick_NotSelected;
         mv.OnMonsterClick += OnMonsterClick_Selected;        
+    }
+
+    private void OnOpenLanguagePanelClick()
+    {
+        openLanguagePanelSignal.Dispatch();
     }
 
     

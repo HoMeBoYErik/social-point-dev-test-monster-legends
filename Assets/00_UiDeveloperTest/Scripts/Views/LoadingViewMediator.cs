@@ -34,7 +34,7 @@ public class LoadingViewMediator : Mediator{
     public FloatReactiveProperty loadProgress = new FloatReactiveProperty(0);
 
     public bool isDataLoaded = false;
-    private string[] randomPhrases = { "monsters", "gems", "pizzas", "coins", "trees", "colours", "ice creams" };
+    private string[] randomPhrases = { "monsters", "levels", "gems", "coins", "love", "colours", "sprites", "textures", "skill" };
     private string loadingTranslated;
 
 
@@ -44,7 +44,7 @@ public class LoadingViewMediator : Mediator{
 
         // Init view
         view.init();
-        loadingRandomPhrase.SubscribeToText(view.loading_text);
+        loadingRandomPhrase.SubscribeToText(view.random_phrase);
         loadProgress.Subscribe(x => view.progress_bar.value = x);
         StartCoroutine(GenerateRandomPhrase());
         // We are ready to load game data
@@ -74,14 +74,13 @@ public class LoadingViewMediator : Mediator{
         {
             loadingTranslated = "ЗАГРУЗКА";
         }
-
+        view.loading_text.text = loadingTranslated;
 
         while( !isDataLoaded )
         {
-
-            loadingRandomPhrase.Value = loadingTranslated + "..." + randomPhrases[UnityEngine.Random.Range(0, randomPhrases.Length)];
-            //loadProgress.Value = UnityEngine.Random.Range(0.1f, 0.95f);
-            yield return new WaitForSeconds(1.0f);
+            loadingRandomPhrase.Value = (loadingTranslated + "..." + randomPhrases[UnityEngine.Random.Range(0, randomPhrases.Length)]).ToLower();
+            
+            yield return new WaitForSeconds(0.5f);
         }
         
     }

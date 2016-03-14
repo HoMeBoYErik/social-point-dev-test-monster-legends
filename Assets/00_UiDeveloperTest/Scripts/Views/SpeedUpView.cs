@@ -30,6 +30,12 @@ public class SpeedUpView : View{
     public ClosePopupClick OnClosePopupClick;
 
 
+    // FX and Particles
+    public GameObject SpeedUpPopupViewFX;
+    public GameObject gem_aura_fx;
+    public GameObject hearth_spark;
+
+
 
     // On Awake
     protected override void Awake()
@@ -45,6 +51,10 @@ public class SpeedUpView : View{
         popup_close_sound = popup_close_button.gameObject.GetComponent<AudioSource>();
         canvas = this.transform.GetComponent<CanvasGroup>();
         popup_open_sound = this.GetComponent<AudioSource>();
+
+        SpeedUpPopupViewFX = GameObject.Find("SpeedUpPopupViewFX");
+        gem_aura_fx = SpeedUpPopupViewFX.transform.FindChild("gem_aura").gameObject;
+        hearth_spark = SpeedUpPopupViewFX.transform.FindChild("hearth_spark").gameObject;
     }
 
     // Reset view to default state
@@ -89,6 +99,10 @@ public class SpeedUpView : View{
     #region VIEW ANIMATIONS CONTROLS
     public void HideView()
     {
+        SpeedUpPopupViewFX.SetActive(false);
+        gem_aura_fx.SetActive(false);
+        hearth_spark.SetActive(false);
+
         if( this.canvas.alpha > 0)
         {
             canvas.interactable = false;
@@ -101,6 +115,10 @@ public class SpeedUpView : View{
     }
     public void ShowView()
     {
+        SpeedUpPopupViewFX.SetActive(true);
+        gem_aura_fx.SetActive(true);
+        hearth_spark.SetActive(true);
+
         if (this.canvas.alpha < 1f)
         {
             popup_open_sound.Play();

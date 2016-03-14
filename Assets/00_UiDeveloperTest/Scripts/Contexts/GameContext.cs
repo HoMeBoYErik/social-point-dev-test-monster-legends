@@ -104,6 +104,10 @@ namespace SocialPoint
             injectionBinder.Bind<BreedingEndedReceivedSignal>().ToSingleton();
             // when a user speed up the breeding process
             injectionBinder.Bind<BreedingSpeededUpSignal>().ToSingleton();
+            // when a view ask for the popup of language selection
+            injectionBinder.Bind<OpenLanguagePanelSignal>().ToSingleton();
+            // when the popup is dismissed we can activate back fx on breeding view
+            injectionBinder.Bind<SpeedUpPopupDismissed>().ToSingleton();
 
             // Bind prefabs based on configuration
 
